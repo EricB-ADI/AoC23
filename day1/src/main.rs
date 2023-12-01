@@ -1,4 +1,5 @@
 
+use itertools::MinMaxResult;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -80,22 +81,19 @@ fn main() {
             }
         }
 
-        //Probably faster but I feel cooler the other way
-        // let mut min_key = 100;
-        // let mut max_key = 0;
+        let mut min_key = 100;
+        let mut max_key = 0;
 
-        // for(key, _) in &present_nums{
-        //     if *key  < min_key{
-        //         min_key = *key;
-        //     }
+        for(key, _) in &present_nums{
+            if *key  < min_key{
+                min_key = *key;
+            }
 
-        //     if *key > max_key{
-        //         max_key = *key;
-        //     }
-        // }
+            if *key > max_key{
+                max_key = *key;
+            }
+        }
 
-        let min_key = present_nums.keys().min().unwrap();
-        let max_key = present_nums.keys().max().unwrap();
 
         let min_num = present_nums.get(&min_key).unwrap();
         let max_num = present_nums.get(&max_key).unwrap();
