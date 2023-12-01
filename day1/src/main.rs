@@ -1,5 +1,4 @@
-
-use itertools::MinMaxResult;
+use itertools::{MinMaxResult, Itertools};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -47,25 +46,26 @@ fn main() {
     println!("SUM {}", cal_values.iter().sum::<u32>());
 
     //Part 2
-    let mut num_lut = HashMap::new();
-    num_lut.insert("one", "1");
-    num_lut.insert("two", "2");
-    num_lut.insert("three", "3");
-    num_lut.insert("four", "4");
-    num_lut.insert("five", "5");
-    num_lut.insert("six", "6");
-    num_lut.insert("seven", "7");
-    num_lut.insert("eight", "8");
-    num_lut.insert("nine", "9");
-    num_lut.insert("1", "1");
-    num_lut.insert("2", "2");
-    num_lut.insert("3", "3");
-    num_lut.insert("4", "4");
-    num_lut.insert("5", "5");
-    num_lut.insert("6", "6");
-    num_lut.insert("7", "7");
-    num_lut.insert("8", "8");
-    num_lut.insert("9", "9");
+    let num_lut = HashMap::from([
+        ("one", "1"),
+        ("two", "2"),
+        ("three", "3"),
+        ("four", "4"),
+        ("five", "5"),
+        ("six", "6"),
+        ("seven", "7"),
+        ("eight", "8"),
+        ("nine", "9"),
+        ("1", "1"),
+        ("2", "2"),
+        ("3", "3"),
+        ("4", "4"),
+        ("5", "5"),
+        ("6", "6"),
+        ("7", "7"),
+        ("8", "8"),
+        ("9", "9"),
+    ]);
 
     let mut cal_nums = vec![];
 
@@ -81,18 +81,13 @@ fn main() {
             }
         }
 
-        let mut min_key = 100;
-        let mut max_key = 0;
-
-        for(key, _) in &present_nums{
-            if *key  < min_key{
-                min_key = *key;
-            }
-
-            if *key > max_key{
-                max_key = *key;
-            }
-        }
+        let minmax = present_nums.keys().into_iter().minmax();
+        
+        let (min_key, max_key) = match minmax{
+            MinMaxResult::MinMax(min_val, max_val) => (min_val,max_val),
+            MinMaxResult::OneElement(elem) => (elem, elem),
+            MinMaxResult::NoElements => panic!("Gotta be something")
+        };
 
 
         let min_num = present_nums.get(&min_key).unwrap();
@@ -102,6 +97,6 @@ fn main() {
 
         cal_nums.push(num_str.parse::<u32>().unwrap());
     }
-    let part2_sum = cal_nums.iter().sum::<u32>();
-    println!("SUM2 {}", part2_sum);
+    
+    println!("SUM2 {}", cal_nums.iter().sum::<u32>());
 }
