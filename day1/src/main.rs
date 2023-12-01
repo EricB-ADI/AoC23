@@ -1,4 +1,4 @@
-use std::cmp::min;
+
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -38,12 +38,12 @@ fn main() {
 
         let cal_str = format!("{}{}", char1, char2);
 
-        let cal_num: i32 = cal_str.parse().unwrap();
+        let cal_num: u32 = cal_str.parse().unwrap();
 
         cal_values.push(cal_num);
     }
 
-    println!("SUM {}", cal_values.iter().sum::<i32>());
+    println!("SUM {}", cal_values.iter().sum::<u32>());
 
     //Part 2
     let mut num_lut = HashMap::new();
@@ -66,8 +66,6 @@ fn main() {
     num_lut.insert("8", "8");
     num_lut.insert("9", "9");
 
-    
-
     let mut cal_nums = vec![];
 
     for line in lines {
@@ -75,33 +73,37 @@ fn main() {
 
         for (num, _) in &num_lut {
             if let Some(index) = line.find(num) {
-             
-             
+                present_nums.insert(index, num_lut.get(num).unwrap());
+            }
+            if let Some(index) = line.rfind(num) {
                 present_nums.insert(index, num_lut.get(num).unwrap());
             }
         }
 
+        //Probably faster but I feel cooler the other way
+        // let mut min_key = 100;
+        // let mut max_key = 0;
 
-        let mut min_key = 100;
-        let mut max_key = 0;
-        for(key, _) in &present_nums{
-            if *key  < min_key{
-                min_key = *key;
-            }
+        // for(key, _) in &present_nums{
+        //     if *key  < min_key{
+        //         min_key = *key;
+        //     }
 
-            if *key > max_key{
-                max_key = *key;
-            }
-        }   
-        
+        //     if *key > max_key{
+        //         max_key = *key;
+        //     }
+        // }
+
+        let min_key = present_nums.keys().min().unwrap();
+        let max_key = present_nums.keys().max().unwrap();
 
         let min_num = present_nums.get(&min_key).unwrap();
         let max_num = present_nums.get(&max_key).unwrap();
 
         let num_str = format!("{min_num}{max_num}");
-        cal_nums.push(num_str.parse::<i32>().unwrap());
-        
+
+        cal_nums.push(num_str.parse::<u32>().unwrap());
     }
-    let part2_sum = cal_nums.iter().sum::<i32>();
+    let part2_sum = cal_nums.iter().sum::<u32>();
     println!("SUM2 {}", part2_sum);
 }
