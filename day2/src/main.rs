@@ -1,8 +1,6 @@
-use itertools::{Itertools, MinMaxResult};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
-
 
 fn read_lines_into_vector(file_path: &str) -> Result<Vec<String>, io::Error> {
     let file = File::open(file_path)?;
@@ -41,23 +39,30 @@ fn main() {
 
     let num_cubes = HashMap::from([("red", 12), ("green", 13), ("blue", 14)]);
 
-    let mut valid_games = vec![];
+    let mut valid_games: Vec<u32> = Vec::new();
+    let mut power_cubes: Vec<u32> = Vec::new();
 
     for line in lines {
         let game_info: Vec<&str> = line.split(":").collect();
+
         let sets: Vec<&str> = game_info[1].split(";").collect();
-        let game_id: Vec<&str> = game_info[0].split_whitespace().collect();
-        let game_id = game_id[1].parse::<u32>().unwrap();
+        let game_id: u32 = game_info[0]
+            .split_whitespace()
+            .nth(1)
+            .unwrap()
+            .parse::<u32>()
+            .unwrap();
 
         let mut valid_game = true;
-        for set in sets {
+        for set in &sets {
             let colors = parse_set(&set);
 
-
             for (key, value) in &num_cubes {
+        
                 let mut valid_set = true;
                 if colors.contains_key(*key) {
                     valid_set = colors.get(*key).unwrap() <= value;
+
                 }
 
                 if !valid_set {
@@ -70,11 +75,32 @@ fn main() {
                 break;
             }
         }
+
+        let mut cubes_needed = HashMap::new();
+
+        for set in &sets {
+            let colors = parse_set(&set);
+
+            for (color, value) in &colors {
+                if let Some(cubes) = cubes_needed.get(color) {
+                    if *value >= *cubes {
+                        cubes_needed.insert(String::from(color), *value);
+                    }
+                } else {
+                    cubes_needed.insert(String::from(color), *value);
+                }
+            }
+        }
+
+        power_cubes.push(cubes_needed.values().product());
+
         if valid_game {
             valid_games.push(game_id);
         }
     }
 
-    println!("{:?}", valid_games);
-    println!("{}", valid_games.iter().sum::<u32>());
+    // println!("{:?}", valid_games);
+    println!("Sum {}", valid_games.iter().sum::<u32>());
+    // println!("{:?}", power_cubes);
+    println!("Power cubes {}", power_cubes.iter().sum::<u32>());
 }
