@@ -54,7 +54,7 @@ fn main() {
             .unwrap();
 
         let mut valid_game: bool = true;
-        
+
         for set in &sets {
             let colors = parse_set(&set);
 
@@ -70,8 +70,6 @@ fn main() {
         let mut cubes_needed: HashMap<String, u32> = HashMap::new();
 
         for set in &sets {
-
-
             let colors: HashMap<String, u32> = parse_set(&set);
 
             for (color, value) in colors {
