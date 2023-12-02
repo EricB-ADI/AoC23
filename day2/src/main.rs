@@ -54,22 +54,13 @@ fn main() {
             .unwrap();
 
         let mut valid_game = true;
+        
         for set in &sets {
             let colors = parse_set(&set);
 
-            for (key, value) in &num_cubes {
-        
-                let mut valid_set = true;
-                if colors.contains_key(*key) {
-                    valid_set = colors.get(*key).unwrap() <= value;
-
-                }
-
-                if !valid_set {
-                    valid_game = false;
-                    break;
-                }
-            }
+            valid_game = num_cubes
+                .iter()
+                .all(|(key, value)| colors.get(*key).map_or(true, |&c| c <= *value));
 
             if !valid_game {
                 break;
@@ -79,7 +70,9 @@ fn main() {
         let mut cubes_needed = HashMap::new();
 
         for set in &sets {
-            let colors = parse_set(&set);
+
+
+            let colors: HashMap<String, u32> = parse_set(&set);
 
             for (color, value) in &colors {
                 if let Some(cubes) = cubes_needed.get(color) {
