@@ -33,11 +33,11 @@ fn parse_set(set: &str) -> HashMap<String, u32> {
     return colors;
 }
 fn main() {
-    let file_path = "input.txt";
+    let file_path: &str = "input.txt";
 
-    let lines = read_lines_into_vector(file_path).unwrap();
+    let lines: Vec<String> = read_lines_into_vector(file_path).unwrap();
 
-    let num_cubes = HashMap::from([("red", 12), ("green", 13), ("blue", 14)]);
+    let num_cubes: HashMap<&str, u32> = HashMap::from([("red", 12), ("green", 13), ("blue", 14)]);
 
     let mut valid_games: Vec<u32> = Vec::new();
     let mut power_cubes: Vec<u32> = Vec::new();
@@ -53,7 +53,7 @@ fn main() {
             .parse::<u32>()
             .unwrap();
 
-        let mut valid_game = true;
+        let mut valid_game: bool = true;
         
         for set in &sets {
             let colors = parse_set(&set);
@@ -67,20 +67,20 @@ fn main() {
             }
         }
 
-        let mut cubes_needed = HashMap::new();
+        let mut cubes_needed: HashMap<String, u32> = HashMap::new();
 
         for set in &sets {
 
 
             let colors: HashMap<String, u32> = parse_set(&set);
 
-            for (color, value) in &colors {
-                if let Some(cubes) = cubes_needed.get(color) {
-                    if *value >= *cubes {
-                        cubes_needed.insert(String::from(color), *value);
+            for (color, value) in colors {
+                if let Some(cubes) = cubes_needed.get(&color) {
+                    if value >= *cubes {
+                        cubes_needed.insert(color, value);
                     }
                 } else {
-                    cubes_needed.insert(String::from(color), *value);
+                    cubes_needed.insert(color, value);
                 }
             }
         }
