@@ -23,25 +23,30 @@ fn main() {
 
     let mut symbol_locations: Vec<Vec<i32>> = Vec::new();
     let mut possible_gears: Vec<Vec<usize>> = Vec::new();
+    let mut parsed_lines = vec![];
+    let re = Regex::new(r"(\d+)").unwrap();
+
     for (i, line) in lines.iter().enumerate() {
         symbol_locations.push(Vec::new());
         possible_gears.push(Vec::new());
 
         for (j, c) in line.chars().enumerate() {
-            if c.is_numeric() || c == '.' {
-                continue;
-            } else {
+            if !c.is_numeric() && c != '.' {
                 symbol_locations[i].push(j as i32);
-
                 if c == '*' {
                     possible_gears[i].push(j);
                 }
             }
         }
+        let parsed: Vec<(usize, usize, u32)> = re
+            .find_iter(line)
+            .map(|m| (m.start(), m.end(), m.as_str().parse().unwrap()))
+            .collect();
+        parsed_lines.push(parsed);
     }
 
     let mut nums = vec![];
-    let re = Regex::new(r"(\d+)").unwrap();
+
     for (line_num, line) in lines.iter().enumerate() {
         let numbers_with_indices: Vec<(i32, i32, &str)> = re
             .find_iter(line)
@@ -82,54 +87,40 @@ fn main() {
             }
         }
     }
+
     let mut gear_ratios = vec![];
 
     for (line_num, location) in possible_gears.iter().enumerate() {
-        if location.len() == 0 {
+        if location.is_empty() {
             continue;
         }
 
-        let aboveline: Vec<(usize, usize, &str)> = if line_num > 0 {
-            let topline = lines.get(line_num - 1).unwrap();
-            re.find_iter(topline)
-                .map(|m| (m.start(), m.end(), m.as_str()))
-                .collect()
-        } else {
-            Vec::new()
-        };
-
-        let line = lines.get(line_num).unwrap();
-        let sameline: Vec<(usize, usize, &str)> = re
-            .find_iter(line)
-            .map(|m| (m.start(), m.end(), m.as_str()))
-            .collect();
-        let lowerline: Vec<(usize, usize, &str)> = if line_num < lines.len() - 1 {
-            let bottomline = lines.get(line_num + 1).unwrap();
-
-            re.find_iter(bottomline)
-                .map(|m| (m.start(), m.end(), m.as_str()))
-                .collect()
-        } else {
-            Vec::new()
-        };
+        let sameline: Vec<(usize, usize, u32)> =
+            parsed_lines.get(line_num).cloned().unwrap_or_default();
+        let aboveline: Vec<(usize, usize, u32)> = parsed_lines
+            .get(line_num.wrapping_sub(1))
+            .cloned()
+            .unwrap_or_default();
+        let lowerline: Vec<(usize, usize, u32)> =
+            parsed_lines.get(line_num + 1).cloned().unwrap_or_default();
 
         for maybe_gear in location {
             let mut adj_nums = vec![];
 
             for (start, stop, num) in &sameline {
                 if *stop == *maybe_gear || maybe_gear + 1 == *start {
-                    adj_nums.push(num.parse::<u32>().unwrap());
+                    adj_nums.push(*num);
                 }
             }
             for (start, stop, num) in &aboveline {
                 if *start <= *maybe_gear + 1 && *maybe_gear <= *stop {
-                    adj_nums.push(num.parse::<u32>().unwrap());
+                    adj_nums.push(*num);
                 }
             }
             for (start, stop, num) in &lowerline {
                 let left = if *start == 0 { 0 } else { *start - 1 };
                 if left <= *maybe_gear && *maybe_gear <= *stop {
-                    adj_nums.push(num.parse::<u32>().unwrap());
+                    adj_nums.push(*num);
                 }
             }
 
