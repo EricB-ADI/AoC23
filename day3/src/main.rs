@@ -18,7 +18,10 @@ fn read_lines_into_vector(file_path: &str) -> Result<Vec<String>, io::Error> {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let file_path = args[1].clone();
+    let file_path = match args.get(1){
+        Some(fp) => fp,
+        None => panic!("Expected file path of input!")
+    };
     let lines: Vec<String> = read_lines_into_vector(&file_path).unwrap();
 
     let mut symbol_locations: Vec<Vec<i32>> = Vec::new();
