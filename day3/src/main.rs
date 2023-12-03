@@ -1,8 +1,7 @@
-
 use regex::Regex;
 use std::fs::File;
 use std::io::{self, BufRead};
-use std::{vec, env};
+use std::{env, vec};
 
 fn read_lines_into_vector(file_path: &str) -> Result<Vec<String>, io::Error> {
     let file = File::open(file_path)?;
@@ -114,52 +113,32 @@ fn main() {
             Vec::new()
         };
 
-        let mut adj_nums = vec![];
+        for maybe_gear in location {
+            let mut adj_nums = vec![];
 
-        for maybe_gear in location{
-            
-        }
-
-        for (start, stop, num) in sameline {
-            if stop < line.len() && line.chars().nth(stop).unwrap() == '*' {
-                adj_nums.push(num.parse::<u32>().unwrap());
-            } else if start != 0 && line.chars().nth(start - 1).unwrap() == '*' {
-                adj_nums.push(num.parse::<u32>().unwrap());
+            for (start, stop, num) in &sameline {
+                if *stop == *maybe_gear || maybe_gear + 1 == *start {
+                    adj_nums.push(num.parse::<u32>().unwrap());
+                }
             }
-        }
-
-        for (start, stop, num) in aboveline {
-            let left = if start == 0 { 0 } else { start - 1 };
-
-            if location.iter().any(|x| x >= &left && x <= &stop) {
-                adj_nums.push(num.parse::<u32>().unwrap());
+            for (start, stop, num) in &aboveline {
+                if *start <= *maybe_gear + 1 && *maybe_gear <= *stop {
+                    adj_nums.push(num.parse::<u32>().unwrap());
+                }
             }
-        }
-
-        for (start, stop, num) in lowerline {
-            let left = if start == 0 { 0 } else { start - 1 };
-            let right = if stop < lines.get(line_num + 1).unwrap().len(){
-                stop + 1
-            }else{
-                stop
-            };
-
-
-            println!("{} {} {} {:?}", left, right, num, location);
-            if location.iter().any(|x| x >= &left && x  <= &stop) {
-                adj_nums.push(num.parse::<u32>().unwrap());
+            for (start, stop, num) in &lowerline {
+                let left = if *start == 0 { 0 } else { *start - 1 };
+                if left <= *maybe_gear && *maybe_gear <= *stop {
+                    adj_nums.push(num.parse::<u32>().unwrap());
+                }
             }
-        }
 
-        if adj_nums.len() == 2 {
-            gear_ratios.push(adj_nums.iter().product::<u32>());
-        }
-        else if adj_nums.len() > 2{
-            println!("{:?}", adj_nums);
-            println!("too many nums!");
+            if adj_nums.len() == 2 {
+                gear_ratios.push(adj_nums.iter().product::<u32>());
+            }
         }
     }
 
-    // println!("SUM1 {:?}", nums.iter().sum::<u32>());
-    println!("{:?}", gear_ratios.iter().sum::<u32>());
+    println!("SUM1 {:?}", nums.iter().sum::<u32>());
+    println!("GEAR SUM {:?}", gear_ratios.iter().sum::<u32>());
 }
