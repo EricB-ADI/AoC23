@@ -2,26 +2,8 @@ import re
 import threading
 
 
-results = []
-def solve(seed_range, plant_maps):
-    min_seed = seed_range[-1] + 1
-    for seed in seed_range:
-        pointer = int(seed)
-        for map_name in plant_maps:
-            for cover in plant_maps[map_name]:
-                dest_start = int(cover[0])
-                src_start = int(cover[1])
-                length = int(cover[2])
 
-                if pointer >= src_start and pointer < src_start + length:
-                    pointer = dest_start + (pointer - src_start)
-                    break
-        if pointer < min_seed:
-            min_seed = pointer
-    results.append(min_seed)
-    print('THREAD DONE!')
-
-with open('input2.txt', 'r') as f:
+with open('input.txt', 'r') as f:
     lines = f.readlines()
 
 seeds  = lines[0].split(':')[1].strip().replace('\n','').split(' ')
@@ -31,7 +13,7 @@ seeds_expanded = []
 for i in range(0, len(seeds), 2):
     seeds_expanded.append((seeds[i], seeds[i] + seeds[i + 1]))
 
-print(seeds_expanded)
+
 
 current_map = ''
 plant_maps = {}
