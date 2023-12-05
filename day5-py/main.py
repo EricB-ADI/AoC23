@@ -21,7 +21,7 @@ def solve(seed_range, plant_maps):
     results.append(min_seed)
     print('THREAD DONE!')
 
-with open('input.txt', 'r') as f:
+with open('input2.txt', 'r') as f:
     lines = f.readlines()
 
 seeds  = lines[0].split(':')[1].strip().replace('\n','').split(' ')
@@ -29,7 +29,7 @@ seeds = [int(x) for x in seeds]
 seeds_expanded = []
 
 for i in range(0, len(seeds), 2):
-    seeds_expanded.append(range(seeds[i], seeds[i] + seeds[i + 1]))
+    seeds_expanded.append((seeds[i], seeds[i] + seeds[i + 1]))
 
 print(seeds_expanded)
 
@@ -48,35 +48,38 @@ for line in lines[1:]:
             plant_maps[current_map].append(numbers)
 
 
-seed_locations = []
 
+for map in plant_maps:
+    mapped_ranges = []
 
+    while seeds_expanded:
+        seed_start, seed_stop = seeds_expanded.pop()
+        done_mapping = False
+        
+        for dest, src, sz in plant_maps[map]:
+            src = int(src)
+            dest = int(dest)
+            sz = int(sz)
 
-threads = []
-for seed_range in seeds_expanded:
-    
-    thread = threading.Thread(target=solve, args=(seed_range, plant_maps))
-    threads.append(thread)
-    thread.start()
+            overlap_start = max(seed_start, int(src))
+            overlap_stop = min(seed_stop, int(src) +sz)
 
-for thread in threads:
-    thread.join()
-# for seed_range in seeds_expanded:
-#     print(seed_range)
-#     for seed in seed_range:
-#         pointer = int(seed)
-#         for map_name in plant_maps:
-#             for cover in plant_maps[map_name]:
-#                 dest_start = int(cover[0])
-#                 src_start = int(cover[1])
-#                 length = int(cover[2])
+            if overlap_start < overlap_stop:
                 
-#                 if pointer >= src_start and pointer < src_start + length:
-#                     pointer = dest_start + (pointer - src_start)
-#                     break
-#         seed_locations.append(pointer)
+                mapped_ranges.append((dest + (overlap_start - src), (dest + (overlap_stop - src))))
+        
+                if seed_start < overlap_start:
+                    seeds_expanded.append((seed_start, overlap_start))
+                if overlap_stop < seed_stop:
+                    seeds_expanded.append((seed_stop, overlap_stop))
+                done_mapping = True
+                break
+        if not done_mapping:
+            mapped_ranges.append((seed_start, seed_stop))
+    seeds_expanded = mapped_ranges
 
-print(min(results))
+
+print(min(seeds_expanded)[0])
 
 
 
