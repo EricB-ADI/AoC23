@@ -1,4 +1,3 @@
-use core::time;
 use std::env;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -25,7 +24,7 @@ fn main() {
 
     let mut worth = 0;
 
-    let mut times_played = vec![1;lines.len()];
+    let mut times_played = vec![1; lines.len()];
 
     for (game_num, line) in lines.iter().enumerate() {
         let ginfo: Vec<&str> = line.split(":").collect();
@@ -37,7 +36,7 @@ fn main() {
         let mut total_matches = 0;
         for num in winning {
             if your_nums.contains(&num) {
-                total_matches +=1;
+                total_matches += 1;
                 if game_worth == 0 {
                     game_worth = 1;
                 } else {
@@ -46,22 +45,13 @@ fn main() {
             }
         }
         worth += game_worth;
-        
-        
-        for w in 0 .. total_matches
-        {
-            times_played[game_num + w +1] += times_played[game_num];
+
+        for w in 0..total_matches {
+            times_played[game_num + w + 1] += times_played[game_num];
         }
-    
     }
 
-
-
-
-    let init_idx: Vec<usize> = (0..lines.len()).collect();
-
     println!("{}", worth);
+    println!("{:?}", times_played);
     println!("{}", times_played.iter().sum::<i32>());
-
-    // println!("{}", lines.len() as u32 + solve_pls(&init_idx, &lines));
 }
