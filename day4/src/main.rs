@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::env;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -29,12 +30,19 @@ fn main() {
     for (game_num, line) in lines.iter().enumerate() {
         let ginfo: Vec<&str> = line.split(":").collect();
         let nums: Vec<&str> = ginfo.get(1).unwrap().split("|").collect();
-        let winning: Vec<&str> = nums[0].split_whitespace().collect();
-        let your_nums: Vec<&str> = nums[1].split_whitespace().collect();
+        let winning_nums: HashSet<u32> = nums[0]
+            .split_whitespace()
+            .map(|x| x.parse::<u32>().unwrap())
+            .collect();
+        let your_nums: HashSet<u32> = nums[1]
+            .split_whitespace()
+            .map(|x| x.parse::<u32>().unwrap())
+            .collect();
 
         let mut game_worth = 0;
         let mut total_matches = 0;
-        for num in winning {
+
+        for num in winning_nums {
             if your_nums.contains(&num) {
                 total_matches += 1;
                 if game_worth == 0 {
