@@ -52,6 +52,5 @@ fn main() {
     }
 
     println!("{}", worth);
-    println!("{:?}", times_played);
     println!("{}", times_played.iter().sum::<i32>());
 }
