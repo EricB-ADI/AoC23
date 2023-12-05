@@ -43,8 +43,8 @@ for map in plant_maps:
             dest = int(dest)
             sz = int(sz)
 
-            overlap_start = max(seed_start, int(src))
-            overlap_stop = min(seed_stop, int(src) +sz)
+            overlap_start = max(seed_start, src)
+            overlap_stop = min(seed_stop, src +sz)
 
             if overlap_start < overlap_stop:
                 
@@ -56,6 +56,7 @@ for map in plant_maps:
                     seeds_expanded.append((seed_stop, overlap_stop))
                 done_mapping = True
                 break
+
         if not done_mapping:
             mapped_ranges.append((seed_start, seed_stop))
     seeds_expanded = mapped_ranges
