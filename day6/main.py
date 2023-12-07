@@ -5,7 +5,7 @@ with open('input1.txt', 'r') as f:
 
 def get_ways_to_win(time, dist_to_beat):
     possible_winners = []
-    for hold_time in range(1, time):
+    for hold_time in range(time * 2//10, time *8//10):
         possible_dist = (time - hold_time) * hold_time
         if possible_dist > dist_to_beat:
             possible_winners.append(hold_time)
@@ -19,11 +19,11 @@ distances = re.findall(r'\d+',lines[1])
 dist_extended = int(''.join(distances))
 distances = [int(x) for x in distances]
 
-race_stats = zip(times, distances)
+
 possible_ways_acc = []
 for (i, time) in enumerate(times):
     possible_winners = []
-    for hold_time in range(1, time):
+    for hold_time in range(time * 2//10, time * 8//10):
         possible_dist = (time - hold_time) * hold_time
         if possible_dist > distances[i]:
             possible_winners.append(hold_time)
