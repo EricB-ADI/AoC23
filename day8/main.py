@@ -7,6 +7,7 @@ with open('input3.txt', 'r') as f:
 pattern = re.compile(r'\b([A-Za-z]+)\b')
 
 
+
 instructions = lines[0]
 path = {}
 starting_key = ''
